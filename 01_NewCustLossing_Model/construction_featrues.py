@@ -1,5 +1,9 @@
+import numpy as np
+import pandas as pd
+
 class construction_featrues:
     '''
+    用于计算衍生指标，输出衍生指标dataframe
     '''
     def __init__(self,data):
         self.data = data
