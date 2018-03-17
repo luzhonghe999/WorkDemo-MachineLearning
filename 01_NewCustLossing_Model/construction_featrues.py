@@ -44,7 +44,7 @@ class construction_featrues:
         df_dummy_comp = pd.get_dummies(df['SUB_COMP_CODE'], prefix='comp', prefix_sep='_')
         df = df.join(df_dummy_comp)
         df = df[df['FIRST_VALID_DATE']<20180228] 
-        del df['OPEN_DATE']
+        # del df['OPEN_DATE']
         del df['CAL_DATE']
         del df['MONI_DATE']
         del df['FIRST_VALID_DATE']
@@ -61,5 +61,4 @@ class construction_featrues:
         del df['LV2_NAME']
         del df['open_datetime']
         del df['valid_datetime']
-        print(type(df))
         return df
