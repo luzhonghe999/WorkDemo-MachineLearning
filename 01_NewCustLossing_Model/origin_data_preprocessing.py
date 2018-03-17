@@ -33,7 +33,6 @@ class origin_data_preprocessing:
                 x_min = min(pd.to_numeric(cal_series, errors='coerce'))
             duplicate_count = len(cal_series.drop_duplicates())
             column_info = [column_name,x_type,na_count,na_rate,zero_count,zero_rate,x_max,x_min,duplicate_count]
-            print(column_info)
             data_columns_info.append(column_info)
         df = DataFrame(data_columns_info)
         df.columns = ['column_name','x_type','na_count','na_rate','zero_count','zero_rate','x_max','x_min','duplicate_count']
