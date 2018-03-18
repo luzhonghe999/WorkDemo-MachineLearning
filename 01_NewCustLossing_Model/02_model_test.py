@@ -1,10 +1,10 @@
-# coding=gbk  
+
    
 import time    
 from sklearn import metrics    
 import pickle as pickle    
 import pandas as pd  
-  
+from sklearn import preprocessing
     
 # Multinomial Naive Bayes Classifier    
 def naive_bayes_classifier(train_x, train_y):    
@@ -76,23 +76,27 @@ def svm_cross_validation(train_x, train_y):
     model.fit(train_x, train_y)    
     return model    
     
-def read_data(data_file):    
-    data = pd.read_csv(data_file)  
-    train = data[:int(len(data)*0.9)]  
-    test = data[int(len(data)*0.9):]  
+def read_data(model_file,test_file):    
+    train = pd.read_csv(model_file)
+    test = pd.read_csv(test_file) 
     train_y = train.TARGET
     train_x = train.drop('TARGET', axis=1)  
     test_y = test.TARGET
     test_x = test.drop('TARGET', axis=1)  
+    #标准化、归一化
+    min_max_scaler = preprocessing.MinMaxScaler()
+    train_x = min_max_scaler.fit_transform(train_x)
+    test_x = min_max_scaler.transform(test_x)
     return train_x, train_y, test_x, test_y  
         
 if __name__ == '__main__':    
-    data_file = "F:/WorkProjects/Data/WorkDemo(MachineLearning)/01_NewCustLossing_Data/ModelData/model_data.csv"    
+    model_file = "F:/WorkProjects/Data/WorkDemo(MachineLearning)/01_NewCustLossing_Data/ModelData/model_data.csv"    
+    test_file = "F:/WorkProjects/Data/WorkDemo(MachineLearning)/01_NewCustLossing_Data/ModelData/test_data.csv"    
     thresh = 0.5    
     model_save_file = None    
     model_save = {}    
      
-    test_classifiers = ['NB', 'KNN', 'LR', 'RF', 'DT', 'SVM','SVMCV', 'GBDT']    
+    test_classifiers = ['NB', 'KNN', 'LR', 'RF', 'DT','SVM','SVMCV', 'GBDT']    # 
     classifiers = {'NB':naive_bayes_classifier,     
                   'KNN':knn_classifier,    
                    'LR':logistic_regression_classifier,    
@@ -104,7 +108,7 @@ if __name__ == '__main__':
     }    
         
     print('reading training and testing data...')    
-    train_x, train_y, test_x, test_y = read_data(data_file)    
+    train_x, train_y, test_x, test_y = read_data(model_file,test_file)    
         
     for classifier in test_classifiers:    
         print('******************* %s ********************' % classifier)    
@@ -115,6 +119,7 @@ if __name__ == '__main__':
         if model_save_file != None:    
             model_save[classifier] = model    
         precision = metrics.precision_score(test_y, predict)    
+        print(metrics.confusion_matrix(test_y, predict))
         recall = metrics.recall_score(test_y, predict)    
         print('precision: %.2f%%, recall: %.2f%%' % (100 * precision, 100 * recall))    
         accuracy = metrics.accuracy_score(test_y, predict)    
