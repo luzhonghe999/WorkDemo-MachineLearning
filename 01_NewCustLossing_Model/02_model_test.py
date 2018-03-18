@@ -5,7 +5,9 @@ from sklearn import metrics
 import pickle as pickle    
 import pandas as pd  
 from sklearn import preprocessing
-    
+import warnings
+warnings.filterwarnings("ignore")
+
 # Multinomial Naive Bayes Classifier    
 def naive_bayes_classifier(train_x, train_y):    
     from sklearn.naive_bayes import MultinomialNB    
@@ -94,9 +96,11 @@ if __name__ == '__main__':
     test_file = "F:/WorkProjects/Data/WorkDemo(MachineLearning)/01_NewCustLossing_Data/ModelData/test_data.csv"    
     thresh = 0.5    
     model_save_file = None    
-    model_save = {}    
-     
-    test_classifiers = ['NB', 'KNN', 'LR', 'RF', 'DT','SVM','SVMCV', 'GBDT']    # 
+    model_save = {}  
+
+    f = open('F:/WorkProjects/Data/WorkDemo(MachineLearning)/01_NewCustLossing_Data/ModelFile/model_test.txt', 'w') 
+
+    test_classifiers = ['NB', 'KNN', 'LR','SVMCV','SVM', 'RF', 'DT','GBDT']    # 'SVMCV', ,'SVM'
     classifiers = {'NB':naive_bayes_classifier,     
                   'KNN':knn_classifier,    
                    'LR':logistic_regression_classifier,    
@@ -107,23 +111,24 @@ if __name__ == '__main__':
                  'GBDT':gradient_boosting_classifier    
     }    
         
-    print('reading training and testing data...')    
+    print('reading training and testing data...', file = f)    
     train_x, train_y, test_x, test_y = read_data(model_file,test_file)    
         
     for classifier in test_classifiers:    
-        print('******************* %s ********************' % classifier)    
+        print('******************* %s ********************' % classifier, file = f)    
         start_time = time.time()    
         model = classifiers[classifier](train_x, train_y)    
-        print('training took %fs!' % (time.time() - start_time))    
+        print('training took %fs!' % (time.time() - start_time), file = f)    
         predict = model.predict(test_x)    
         if model_save_file != None:    
             model_save[classifier] = model    
         precision = metrics.precision_score(test_y, predict)    
-        print(metrics.confusion_matrix(test_y, predict))
+        print(metrics.confusion_matrix(test_y, predict), file = f)
         recall = metrics.recall_score(test_y, predict)    
-        print('precision: %.2f%%, recall: %.2f%%' % (100 * precision, 100 * recall))    
+        print('precision: %.2f%%, recall: %.2f%%' % (100 * precision, 100 * recall), file = f)    
         accuracy = metrics.accuracy_score(test_y, predict)    
-        print('accuracy: %.2f%%' % (100 * accuracy))     
+        print('accuracy: %.2f%%' % (100 * accuracy), file = f)     
     
     if model_save_file != None:    
         pickle.dump(model_save, open(model_save_file, 'wb'))  
+    f.close() 
