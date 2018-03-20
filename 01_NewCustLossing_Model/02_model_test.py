@@ -7,6 +7,7 @@ from pandas import DataFrame
 from sklearn import preprocessing
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
+import numpy as np
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -94,6 +95,67 @@ def read_data(model_file,test_file):
     test_x = min_max_scaler.transform(test_x)
     return train_x, train_y, test_x, test_y  
 
+# def cal_precision_recall(test_y, predict_prob):
+#     """
+#     calculate precision and recall
+#     :param test_y: truly value (target)
+#     :param predict_prob: model value (predict probability)
+#     :return: t_precision, t_recall, f_precision, f_recall, thresholds
+#     """
+#     ty = DataFrame(test_y)
+#     all_ty = len(ty)
+#     all_true = ty.apply(lambda x: x.sum())[0]
+#     all_false = all_ty - all_true
+#     df = DataFrame(np.vstack((test_y, predict_prob)).transpose())
+#     df.rename(columns={0: 'test_y', 1: 'predict_prob'}, inplace=True)
+#     df = df.sort_values(by='predict_prob', ascending=False)
+#     t_precision = []
+#     t_recall = []
+#     f_precision = []
+#     f_recall = []
+#     select_percent = []
+#     thresholds = []
+#     i = 1
+#     while i >= 0:
+#         df_new = df[df.predict_prob >= i]
+#         select_true = df_new.apply(lambda x: x.sum())[0]
+#         select_all = len(df_new)
+#         t_precision.append(select_true / select_all)  # 正例准确率  选出的真实正例/选出的正例
+#         t_recall.append(select_true / all_true)  # 正例召回率  选出的真实正例/总真实正例
+#         f_precision.append((all_ty - select_all - (all_true - select_true)) / (all_ty - select_all))
+#         f_recall.append((all_ty - select_all - (all_true - select_true)) / all_false)
+#         select_percent.append(select_all/(all_ty+0.00001))
+#         thresholds.append(i)
+#         i -= 0.005
+#     t_precision = np.array(t_precision)
+#     t_recall = np.array(t_recall)
+#     f_precision = np.array(f_precision)
+#     f_recall = np.array(f_recall)
+#     thresholds = np.array(thresholds)
+#     select_percent = np.array(select_percent)
+#     return t_precision, t_recall, f_precision, f_recall, select_percent, thresholds
+
+# def plot_precision_recall(precision, recall, percent, thresholds, figure_no):
+#     """
+#     plot_precision_recall curve
+#     :param precision: True positive / all predict
+#     :param recall: True positive / all positive
+#     :param percent: select percent
+#     :param thresholds: thresholds
+#     :param figure_no: figure position
+#     :return:
+#     """
+#     plt.sca(figure_no)
+#     figure_no.plot(thresholds, recall, lw=1, label='Recall', color='blue')
+#     figure_no.plot(thresholds, precision, lw=1, label='Precision', color='red')
+#     figure_no.plot(thresholds, percent, lw=1, label='S_Percent', color='m')
+#     figure_no.plot([0, 1], [precision[len(precision)-1], precision[len(precision)-1]], '--',
+#                    lw=1, label='AVG', color='black')
+#     figure_no.set_xlabel('thresholds')
+#     figure_no.set_ylabel('Precision_Recall')
+#     plt.legend(loc='upper right')
+#     plt.title('Precision-Recall curve')
+
 def cal_roc_curve(test_y, predict_prob):
     """
     calculate fpr: False Positive / All Negative;tpr: True Positive / All Positive
@@ -162,8 +224,8 @@ if __name__ == '__main__':
     train_x, train_y, test_x, test_y = read_data(model_file,test_file)    
     color_type=['r','y','m','c','b','orange','lime','darkred']
     i = 0
-    plt.figure(figsize=(16, 7))
-    ax1 = plt.subplot(121)  
+    plt.figure(figsize=(8, 7))
+    ax1 = plt.subplot(111)  
     for classifier in test_classifiers:    
         print('******************* %s ********************' % classifier, file = f)    
         start_time = time.time()    
