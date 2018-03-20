@@ -37,5 +37,6 @@ class origin_data_preprocessing:
         df = DataFrame(data_columns_info)
         df.columns = ['column_name','x_type','na_count','na_rate','zero_count','zero_rate','x_max','x_min','duplicate_count']
         df.to_csv(path)
+        print('Detect Finish')
     def fillna(self,fill_values):
         return self.origin_data.fillna(fill_values)

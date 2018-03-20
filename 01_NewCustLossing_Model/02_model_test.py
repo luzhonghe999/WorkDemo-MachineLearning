@@ -1,9 +1,9 @@
 
-   
 import time    
 from sklearn import metrics    
 import pickle as pickle    
 import pandas as pd  
+from pandas import DataFrame
 from sklearn import preprocessing
 import warnings
 warnings.filterwarnings("ignore")
@@ -63,6 +63,7 @@ def svm_classifier(train_x, train_y):
     model.fit(train_x, train_y)    
     return model    
     
+    
 # SVM Classifier using cross validation    
 def svm_cross_validation(train_x, train_y):    
     from sklearn.grid_search import GridSearchCV    
@@ -79,8 +80,8 @@ def svm_cross_validation(train_x, train_y):
     return model    
     
 def read_data(model_file,test_file):    
-    train = pd.read_csv(model_file)
-    test = pd.read_csv(test_file) 
+    train = DataFrame(pd.read_csv(model_file))
+    test =  DataFrame(pd.read_csv(test_file))
     train_y = train.TARGET
     train_x = train.drop('TARGET', axis=1)  
     test_y = test.TARGET

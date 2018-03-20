@@ -20,9 +20,9 @@ class origin_data_read:
         for i in self.file_names:
             if os.path.splitext(i)[1]==self.file_type: # 选取csv文件进行组合
                 df = pd.read_csv(self.data_folder+i, encoding=self.encoding_type)
-                print(self.data_folder+i,len(df))
+                print(i, self.data_folder+i,len(df))
                 df_con=[data,df]
                 data = pd.concat(df_con,ignore_index=True)
                 print(len(data))
-        print('concat finish')
+        print('Read Data Finish')
         return data
