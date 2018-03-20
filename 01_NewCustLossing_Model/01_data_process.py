@@ -31,3 +31,4 @@ if __name__=="__main__":
     df2=featrue_data[featrue_data['OPEN_DATE']>20180131]
     del df2['OPEN_DATE']
     df2.to_csv(work_file + 'ModelData/test_data.csv',index='False')
+    print('Success!')
