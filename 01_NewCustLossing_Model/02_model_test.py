@@ -5,12 +5,20 @@ import pickle as pickle
 import pandas as pd  
 from pandas import DataFrame
 from sklearn import preprocessing
+import xgboost as xgb
+from xgboost.sklearn import XGBClassifier
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 import numpy as np
 import warnings
 warnings.filterwarnings("ignore")
 
+# xgboost Classifier
+def xgb_classifer(train_x, train_y):
+    model = XGBClassifier()
+    model.fit(train_x, train_y)
+    return model
+    
 # Multinomial Naive Bayes Classifier    
 def naive_bayes_classifier(train_x, train_y):    
     from sklearn.naive_bayes import MultinomialNB    
@@ -209,13 +217,14 @@ if __name__ == '__main__':
 
     f = open('F:/WorkProjects/Data/WorkDemo(MachineLearning)/01_NewCustLossing_Data/ModelFile/model_test.txt', 'w') 
 
-    test_classifiers = ['NB', 'KNN', 'LR', 'RF', 'DT','GBDT']    # ,'SVMCV','SVM'
+    test_classifiers = ['NB', 'KNN', 'LR', 'RF','SVM', 'DT','XGB','GBDT']    # ,'SVMCV','SVM'
     classifiers = {'NB':naive_bayes_classifier,     
                   'KNN':knn_classifier,    
                    'LR':logistic_regression_classifier,    
                    'RF':random_forest_classifier,    
-                   'DT':decision_tree_classifier,    
-                #   'SVM':svm_classifier,    
+                   'DT':decision_tree_classifier,  
+                  'XGB':xgb_classifer,  
+                  'SVM':svm_classifier,    
                 # 'SVMCV':svm_cross_validation,    
                  'GBDT':gradient_boosting_classifier    
     }    
