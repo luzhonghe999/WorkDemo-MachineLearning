@@ -99,7 +99,7 @@ class optimization:
                                             max_depth=8,
                                             max_features='sqrt',
                                             random_state=10,
-                                            n_jobs=-1,
+                                            n_jobs = -1,
                                             oob_score=True),
             param_grid=param_test1, scoring='roc_auc', iid=False, cv=5)
         gsearch1.fit(train_x, train_y)
@@ -111,7 +111,7 @@ class optimization:
                                             min_samples_leaf=20,
                                             max_features='sqrt',
                                             random_state=10,
-                                            n_jobs=-1,
+                                            n_jobs = -1,
                                             oob_score=True),
             param_grid=param_test2, scoring='roc_auc', iid=False, cv=5)
         gsearch2.fit(train_x, train_y)
@@ -123,7 +123,7 @@ class optimization:
                                             max_depth=gsearch2.best_params_['max_depth'],
                                             max_features='sqrt',
                                             random_state=10,
-                                            n_jobs=-1,
+                                            n_jobs = -1,
                                             oob_score=True),
             param_grid=param_test3, scoring='roc_auc', iid=False, cv=5)
         gsearch3.fit(train_x, train_y)
@@ -136,7 +136,7 @@ class optimization:
                                             min_samples_leaf=gsearch3.best_params_['min_samples_leaf'],
                                             min_samples_split=gsearch3.best_params_['min_samples_split'],
                                             random_state=10,
-                                            n_jobs=-1,
+                                            n_jobs = -1,
                                             oob_score=True),
             param_grid=param_test4, scoring='roc_auc', iid=False, cv=5)
         gsearch4.fit(train_x, train_y)

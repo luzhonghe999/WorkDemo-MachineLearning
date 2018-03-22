@@ -95,12 +95,18 @@ def read_data(model_file,test_file):
     test =  DataFrame(pd.read_csv(test_file))
     train_y = train.TARGET
     train_x = train.drop('TARGET', axis=1)  
+    train_x_columns=train_x.columns
     test_y = test.TARGET
     test_x = test.drop('TARGET', axis=1)  
+    test_x_columns=test_x.columns
     #标准化、归一化
     min_max_scaler = preprocessing.MinMaxScaler()
     train_x = min_max_scaler.fit_transform(train_x)
     test_x = min_max_scaler.transform(test_x)
+    train_x =DataFrame(train_x)
+    train_x.columns=train_x_columns 
+    test_x =DataFrame(test_x)
+    test_x.columns=test_x_columns 
     return train_x, train_y, test_x, test_y  
 
 # def cal_precision_recall(test_y, predict_prob):

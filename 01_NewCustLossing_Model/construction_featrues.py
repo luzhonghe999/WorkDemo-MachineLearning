@@ -61,6 +61,7 @@ class construction_featrues:
         del df['LV2_NAME']
         del df['open_datetime']
         del df['valid_datetime']
+        del df['EXPIRE_DATE']
         print('df.shape',df.shape)
         print('Generate Finish')
         return df

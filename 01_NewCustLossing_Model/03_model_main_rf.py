@@ -3,7 +3,7 @@ from sklearn import metrics
 import pandas as pd
 from pandas import DataFrame
 from sklearn import preprocessing
-from xgboost.sklearn import XGBClassifier
+from sklearn.ensemble import RandomForestClassifier
 import optimization as op
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
@@ -75,55 +75,35 @@ def plot_roc(fpr, tpr, thresholds, figure_no,Classifier,color_type):
     plt.title('Receiver operating characteristic')
     plt.legend(loc="lower right")
 
-
 if __name__ == '__main__':    
     model_file = "f:/WorkProjects/Data/WorkDemo(MachineLearning)/01_NewCustLossing_Data/ModelData/model_data.csv"
     test_file = "f:/WorkProjects/Data//WorkDemo(MachineLearning)/01_NewCustLossing_Data/ModelData//test_data.csv"
+    # model_file = "../../Data/WorkDemo(MachineLearning)/01_NewCustLossing_Data/ModelData/model_data.csv"
+    # test_file = "../../Data//WorkDemo(MachineLearning)/01_NewCustLossing_Data/ModelData//test_data.csv"
     train_x, train_y, test_x, test_y = read_data(model_file,test_file) 
     optimization = 'None'
     start_time = time.time() 
     optimization = 'GridSearchCV'
-    parameters = {'n_estimators': 120,
-                'max_depth': 4,
-                'max_features': 7,
-                'silent': True,
-                'objective': 'reg:logistic',
-                'learning_rate': 0.016,
-                'nthread': -1,
-                'gamma': 0,
-                'min_child_weight': 0.8,
-                'max_delta_step': 0,
-                'subsample': 0.80,
-                'colsample_bytree': 0.7,
-                'colsample_bylevel': 1,
-                'reg_alpha': 0,
-                'reg_lambda': 1,
-                'scale_pos_weight': 1,
-                'seed': 1440,
-                'missing': None}
-    # parameters = op.optimization(train_x, train_y).optimization_xgb()
+    parameters = {'n_estimators': 280,
+                    'max_depth':7,
+                    'min_samples_split':100,
+                    'min_samples_leaf':15,
+                    'max_features':27
+                }
+    # parameters = op.optimization(train_x, train_y).optimization_rf()
     # (5.2) model core
-    Classifier_name = 'XGboost'
+    Classifier_name = 'rf'
     # xgb.XGBRegressor
-    model = XGBClassifier(
-                    max_depth=parameters['max_depth'],
-                    n_estimators = parameters['n_estimators'],
-                    learning_rate = parameters['learning_rate'],
-                    min_child_weight=parameters['min_child_weight'],
-                    silent = True,
-                    objective = 'reg:logistic',
-                    nthread = -1,
-                    gamma = 0,
-                    max_delta_step = 0,
-                    subsample = 0.8,
-                    colsample_bytree = 0.7,
-                    colsample_bylevel = 1,
-                    reg_alpha = 0,
-                    reg_lambda = 1,
-                    scale_pos_weight = 1,
-                    seed = 1440,
-                    missing = None)
-    model.fit(train_x, train_y, eval_metric='rmse', verbose=False, eval_set=[(test_x, test_y)], early_stopping_rounds=100)
+    model = RandomForestClassifier(
+        n_estimators=parameters['n_estimators'],
+        max_depth=parameters['max_depth'],
+        min_samples_split=parameters['min_samples_split'],
+        min_samples_leaf=parameters['min_samples_leaf'],
+        max_features=parameters['max_features'],
+        random_state=10,
+        n_jobs=-1,
+        oob_score=True)
+    model.fit(train_x, train_y)
     plt.figure(figsize=(8, 7))
     ax1 = plt.subplot(111)  
     print('training took %fs!' % (time.time() - start_time))    
@@ -137,10 +117,11 @@ if __name__ == '__main__':
     print('precision: %.2f%%, recall: %.2f%%' % (100 * precision, 100 * recall))
     accuracy = metrics.accuracy_score(test_y, predict)
     print('accuracy: %.2f%%' % (100 * accuracy))
+
     plt.sca(ax1)
     plt.plot([0, 1], [0, 1], '--', lw=1, color=(0.6, 0.6, 0.2), label='Normal')
     plt.show()
 
-    pathk = './result_xgb_' + '_'+ str(time.time()) + '.xls'
+    pathk = './result_rf_' + '_'+ str(time.time()) + '.xls'
     ev=ev.evaluation(model, train_x, train_y, test_x, test_y)
     ev.to_xls(pathk, n=50)
