@@ -27,8 +27,10 @@ if __name__=="__main__":
     featrue_data.to_csv(work_file + 'FeatrueData/featrue_data.csv',index=False)
     df1=featrue_data[featrue_data['OPEN_DATE']<=20180131]
     del df1['OPEN_DATE']
+    print(df1.shape)
     df1.to_csv(work_file + 'ModelData/model_data.csv',index=False)
     df2=featrue_data[featrue_data['OPEN_DATE']>20180131]
     del df2['OPEN_DATE']
+    print(df2.shape)
     df2.to_csv(work_file + 'ModelData/test_data.csv',index=False)
     print('Success!')
