@@ -84,7 +84,6 @@ class construction_featrues:
         # (3.3) false
         del df['CUSTOMER_NO']
         del df['PROM_TYPE']
-        del df['PROM_1']
         print('df.shape',df.shape)
         print('Generate Finish')
         return df

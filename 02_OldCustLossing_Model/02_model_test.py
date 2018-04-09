@@ -46,7 +46,7 @@ def logistic_regression_classifier(train_x, train_y):
 # Random Forest Classifier    
 def random_forest_classifier(train_x, train_y):    
     from sklearn.ensemble import RandomForestClassifier    
-    model = RandomForestClassifier(n_estimators=8)    
+    model = RandomForestClassifier(n_estimators=100)
     model.fit(train_x, train_y)    
     return model    
     
@@ -215,49 +215,53 @@ def plot_roc(fpr, tpr, thresholds, figure_no,Classifier,color_type):
     plt.legend(loc="lower right")
 
 if __name__ == '__main__':    
-    model_file = "F:/WorkProjects/Data/WorkDemo(MachineLearning)/02_OldCustLossing_Data/ModelData/model_data.csv"    
-    test_file = "F:/WorkProjects/Data/WorkDemo(MachineLearning)/02_OldCustLossing_Data/ModelData/test_data.csv"    
+    model_file = "e:/Data/WorkDemo(MachineLearning)/02_OldCustLossing_Data/ModelData/model_data.csv"
+    test_file = "e:/Data/WorkDemo(MachineLearning)/02_OldCustLossing_Data/ModelData/test_data.csv"
     thresh = 0.5    
     model_save_file = None    
-    model_save = {}  
+    model_save = {}
+    print('reading training and testing data...')
+    f = open('e:/Data/WorkDemo(MachineLearning)/02_OldCustLossing_Data/ModelFile/model_test.txt', 'w')
 
-    f = open('F:/WorkProjects/Data/WorkDemo(MachineLearning)/02_OldCustLossing_Data/ModelFile/model_test.txt', 'w') 
-
-    test_classifiers = ['NB', 'KNN', 'LR', 'RF', 'DT','XGB','GBDT']    # ,'SVMCV','SVM'
+    test_classifiers = ['NB', 'SVM','KNN', 'LR', 'RF', 'DT','XGB','GBDT']    # ,'SVMCV','SVM''KNN',
     classifiers = {'NB':naive_bayes_classifier,     
-                  'KNN':knn_classifier,    
+                  'KNN':knn_classifier,
                    'LR':logistic_regression_classifier,    
                    'RF':random_forest_classifier,    
                    'DT':decision_tree_classifier,  
                   'XGB':xgb_classifer,  
-                #   'SVM':svm_classifier,    
+                  'SVM':svm_classifier,
                 # 'SVMCV':svm_cross_validation,    
                  'GBDT':gradient_boosting_classifier    
-    }    
-        
-    print('reading training and testing data...', file = f)    
+    }
+    print('start training...')
     train_x, train_y, test_x, test_y = read_data(model_file,test_file)    
     color_type=['r','y','m','c','b','orange','lime','darkred']
     i = 0
     plt.figure(figsize=(8, 7))
     ax1 = plt.subplot(111)  
-    for classifier in test_classifiers:    
-        print('******************* %s ********************' % classifier, file = f)    
+    for classifier in test_classifiers:
         start_time = time.time()    
-        model = classifiers[classifier](train_x, train_y)    
-        print('training took %fs!' % (time.time() - start_time), file = f)    
+        model = classifiers[classifier](train_x, train_y)
         predict = model.predict(test_x)   
         predict_prob = model.predict_proba(test_x)   
         fpr, tpr, thresholds = cal_roc_curve(test_y, predict_prob[:, 1])
         plot_roc(fpr, tpr, thresholds, ax1,classifier,color_type[i])
         if model_save_file != None:    
             model_save[classifier] = model    
-        precision = metrics.precision_score(test_y, predict)    
-        print(metrics.confusion_matrix(test_y, predict), file = f)
-        recall = metrics.recall_score(test_y, predict)    
-        print('precision: %.2f%%, recall: %.2f%%' % (100 * precision, 100 * recall), file = f)    
-        accuracy = metrics.accuracy_score(test_y, predict)    
-        print('accuracy: %.2f%%' % (100 * accuracy), file = f)     
+        precision = metrics.precision_score(test_y, predict)
+        recall = metrics.recall_score(test_y, predict)
+        accuracy = metrics.accuracy_score(test_y, predict)
+        print('******************* %s ********************' % classifier, file=f)
+        print('training took %fs!' % (time.time() - start_time), file=f)
+        print(metrics.confusion_matrix(test_y, predict), file=f)
+        print('precision: %.2f%%, recall: %.2f%%' % (100 * precision, 100 * recall), file=f)
+        print('accuracy: %.2f%%' % (100 * accuracy), file = f)
+        print('******************* %s ********************' % classifier)
+        print('training took %fs!' % (time.time() - start_time))
+        print(metrics.confusion_matrix(test_y, predict))
+        print('precision: %.2f%%, recall: %.2f%%' % (100 * precision, 100 * recall))
+        print('accuracy: %.2f%%' % (100 * accuracy))
         i+=1
     if model_save_file != None:    
         pickle.dump(model_save, open(model_save_file, 'wb'))  
